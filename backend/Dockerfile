@@ -16,7 +16,11 @@ WORKDIR /app
 # Copy built JAR from build stage
 COPY --from=build /app/target/lostfound-backend-1.0.0.jar app.jar
 
-# Expose port 8080
+# Create data directory for persistent file database
+RUN mkdir -p /app/data
+VOLUME ["/app/data"]
+
+# Expose port (default 8080)
 EXPOSE 8080
 
 # Run Spring Boot application

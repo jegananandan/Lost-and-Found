@@ -41,12 +41,19 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
+                // Public authentication & development consoles
+                .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+                // Public read-only API endpoints for browsing lost & found items and matches
                 .requestMatchers(HttpMethod.GET, "/api/items/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/matches/**").permitAll()
+                // Admin-only API endpoints
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                // All other API endpoints require authenticated JWT
+                .requestMatchers("/api/**").authenticated()
+                // Frontend SPA static assets, images, and HTML routes
+                .anyRequest().permitAll()
             );
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

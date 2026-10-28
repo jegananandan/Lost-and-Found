@@ -5,6 +5,11 @@ maven_dir/
 *.class
 *.jar
 *.war
+# Database files
+backend/data/
+backend/data/*.mv.db
+backend/data/*.trace.db
+backend/data/*.lock.db
 
 # Node / Vite React
 frontend/node_modules/
